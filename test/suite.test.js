@@ -1,6 +1,6 @@
 /*global it:false, describe:false, before:false, beforeEach:false, after:false, afterEach:false  */
 
-var Suite = require('./suites').Suite
+var Suite = require('../lib/Suite')
   , runnables = require('../lib/runnables')
   , Constants = require('../lib/Constants')
   , assert = require('assert')
