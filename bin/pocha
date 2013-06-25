@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var Pocha = require('../')
+  , pocha = new Pocha.Pocha()
+
+pocha.addFile('./test.js')
+pocha.run()
+
