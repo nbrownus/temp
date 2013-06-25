@@ -2,6 +2,8 @@
 
 var Pocha = require('../')
   , pocha = new Pocha.Pocha()
+  , graphWriter = new Pocha.writers.FileWriter({ path:'graph.dot' })
+  , graphviz = new Pocha.reporters.Graphviz(pocha, graphWriter)
 
 pocha.addFile('./test.js')
 pocha.run()
