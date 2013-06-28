@@ -1,3 +1,3 @@
 var assert = require('assert')
-  , Colors = require('../lib/Colors')
+  , Colors = require('reporters/Colors')
 

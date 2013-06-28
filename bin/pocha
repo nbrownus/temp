@@ -2,9 +2,62 @@
 
 var Pocha = require('../')
   , pocha = new Pocha.Pocha()
+  , path = require('path')
+  , fs = require('fs')
+  , consoleWriter = new Pocha.writers.ConsoleWriter()
+  , listReporter = new Pocha.reporters.List(pocha, consoleWriter)
   , graphWriter = new Pocha.writers.FileWriter({ path:'graph.dot' })
   , graphviz = new Pocha.reporters.Graphviz(pocha, graphWriter)
 
-pocha.addFile('./test.js')
-pocha.run()
+var args = [process.argv[2]]
+  , files = []
 
+var extensions = ['js']
+  , re = new RegExp('\\.(' + extensions.join('|') + ')$');
+
+if (!args.length) {
+    args.push('test')
+}
+
+args.forEach(function (arg) {
+    files = files.concat(lookupFiles(arg, false))
+})
+
+files.forEach(function (filePath) {
+    pocha.addFile(filePath)
+})
+
+pocha.run(process.exit)
+
+function lookupFiles (filePath, recursive) {
+    var found = []
+
+    if (!fs.existsSync(filePath)) {
+        filePath += '.js'
+    }
+
+    var stat = fs.statSync(filePath)
+    if (stat.isFile()) {
+        return filePath
+    }
+
+    fs.readdirSync(filePath).forEach(function (file) {
+        file = path.join(filePath, file)
+        var stat = fs.statSync(file)
+        if (stat.isDirectory()) {
+            if (recursive) {
+                found = found.concat(lookupFiles(file, recursive))
+            }
+
+            return
+        }
+
+        if (!stat.isFile() || !re.test(file) || path.basename(file)[0] == '.') {
+            return
+        }
+
+        found.push(file)
+    })
+
+    return found
+}
